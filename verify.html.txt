@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KM Agro Verification</title>
+</head>
+<body>
+  <h2>Verifying...</h2>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("t");
+
+    if (!token) {
+      document.body.innerHTML = "<h2>No data found</h2>";
+    } else {
+      document.body.innerHTML = `
+        <h2>QR Data</h2>
+        <pre>${decodeURIComponent(token)}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>
