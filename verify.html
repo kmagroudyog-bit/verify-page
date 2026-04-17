@@ -33,17 +33,25 @@
 
         const data = JSON.parse(decrypted);
 
-        content.innerHTML = `
-          <div style="padding:20px; font-family:Arial;">
-            <h3 style="color:green;">✔ VERIFIED</h3>
-            <div><b>Serial:</b> ${data.s}</div>
-            <div><b>Vehicle:</b> ${data.v}</div>
-            <div><b>Gross:</b> ${data.g}</div>
-            <div><b>Tare:</b> ${data.t}</div>
-            <div><b>Net:</b> ${data.n}</div>
-            <div><b>Date:</b> ${data.ts}</div>
-          </div>
-        `;
+       content.innerHTML = `
+  <div style="padding:20px; font-family:Arial;">
+    <h3 style="color:green;">✔ VERIFIED</h3>
+
+    <div><b>Serial:</b> ${data.s}</div>
+    <div><b>Vehicle:</b> ${data.v}</div>
+
+    <div><b>Party:</b> ${data.p || '-'}</div>
+    <div><b>Broker:</b> ${data.b || '-'}</div>
+    <div><b>Material:</b> ${data.m || '-'}</div>
+
+    <hr style="margin:10px 0;">
+
+    <div><b>Gross:</b> ${data.g}</div>
+    <div><b>Tare:</b> ${data.t}</div>
+    <div><b>Net:</b> ${data.n}</div>
+    <div><b>Date:</b> ${data.ts}</div>
+  </div>
+`;
       }
     } catch (err) {
       console.error(err);
