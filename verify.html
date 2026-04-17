@@ -47,7 +47,7 @@
   } else {
     try {
       // 🔐 SAME KEY AS YOUR APP
-      const SECRET_KEY = "KMAGRO_DEFAULT_KEY";
+      const SECRET_KEY = "KMAGRO_AES_SECRET_32CHARSLONG_KEY";
 
       const bytes = CryptoJS.AES.decrypt(decodeURIComponent(token), SECRET_KEY);
       const decrypted = bytes.toString(CryptoJS.enc.Utf8);
