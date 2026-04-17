@@ -2,22 +2,80 @@
 <html>
 <head>
   <title>KM Agro Verification</title>
-</head>
-<body>
-  <h2>Verifying...</h2>
-
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("t");
-
-    if (!token) {
-      document.body.innerHTML = "<h2>No data found</h2>";
-    } else {
-      document.body.innerHTML = `
-        <h2>QR Data</h2>
-        <pre>${decodeURIComponent(token)}</pre>
-      `;
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f5f5f5;
     }
-  </script>
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: green;
+    }
+    .row {
+      margin: 8px 0;
+    }
+    .label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Verifying...</h2>
+  <div id="content"></div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("t");
+
+  const content = document.getElementById("content");
+
+  if (!token) {
+    content.innerHTML = "<h3>No data found</h3>";
+  } else {
+    try {
+      // 🔐 SAME KEY AS YOUR APP
+      const SECRET_KEY = "KMAGRO_DEFAULT_KEY";
+
+      const bytes = CryptoJS.AES.decrypt(decodeURIComponent(token), SECRET_KEY);
+      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+
+      const data = JSON.parse(decrypted);
+
+      content.innerHTML = `
+        <h3 style="color: green;">✔ VERIFIED</h3>
+
+        <div class="row"><span class="label">Serial:</span> ${data.serial_number || data.serial}</div>
+        <div class="row"><span class="label">Vehicle:</span> ${data.vehicle_number}</div>
+        <div class="row"><span class="label">Party:</span> ${data.party_name}</div>
+        <div class="row"><span class="label">Material:</span> ${data.material}</div>
+        <div class="row"><span class="label">Gross:</span> ${data.gross_weight}</div>
+        <div class="row"><span class="label">Tare:</span> ${data.tare_weight}</div>
+        <div class="row"><span class="label">Net:</span> ${data.net_weight}</div>
+        <div class="row"><span class="label">Date:</span> ${data.created_at}</div>
+      `;
+
+    } catch (err) {
+      content.innerHTML = `
+        <h3 style="color:red;">❌ INVALID QR</h3>
+        <p>Unable to decode data</p>
+      `;
+      console.error(err);
+    }
+  }
+</script>
+
 </body>
 </html>
