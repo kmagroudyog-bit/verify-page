@@ -54,18 +54,16 @@
 
       const data = JSON.parse(decrypted);
 
-      content.innerHTML = `
-        <h3 style="color: green;">✔ VERIFIED</h3>
+     content.innerHTML = `
+  <h3 style="color: green;">✔ VERIFIED</h3>
 
-        <div class="row"><span class="label">Serial:</span> ${data.serial_number || data.serial}</div>
-        <div class="row"><span class="label">Vehicle:</span> ${data.vehicle_number}</div>
-        <div class="row"><span class="label">Party:</span> ${data.party_name}</div>
-        <div class="row"><span class="label">Material:</span> ${data.material}</div>
-        <div class="row"><span class="label">Gross:</span> ${data.gross_weight}</div>
-        <div class="row"><span class="label">Tare:</span> ${data.tare_weight}</div>
-        <div class="row"><span class="label">Net:</span> ${data.net_weight}</div>
-        <div class="row"><span class="label">Date:</span> ${data.created_at}</div>
-      `;
+  <div><b>Serial:</b> ${data.s}</div>
+  <div><b>Vehicle:</b> ${data.v}</div>
+  <div><b>Gross:</b> ${data.g}</div>
+  <div><b>Tare:</b> ${data.t}</div>
+  <div><b>Net:</b> ${data.n}</div>
+  <div><b>Date:</b> ${data.ts}</div>
+`;
 
     } catch (err) {
       content.innerHTML = `
