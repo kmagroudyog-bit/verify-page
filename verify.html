@@ -53,10 +53,12 @@
       const decrypted = bytes.toString(CryptoJS.enc.Utf8);
 
       const data = JSON.parse(decrypted);
+      console.log("DECODED DATA:", data);
 
-     content.innerHTML = `
+    content.innerHTML = `
   <h3 style="color: green;">✔ VERIFIED</h3>
-
+  <pre>${JSON.stringify(data, null, 2)}</pre>
+`;
   <div><b>Serial:</b> ${data.s}</div>
   <div><b>Vehicle:</b> ${data.v}</div>
   <div><b>Gross:</b> ${data.g}</div>
