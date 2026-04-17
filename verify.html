@@ -2,80 +2,58 @@
 <html>
 <head>
   <title>KM Agro Verification</title>
+
+  <!-- CryptoJS REQUIRED -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 500px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-      color: green;
-    }
-    .row {
-      margin: 8px 0;
-    }
-    .label {
-      font-weight: bold;
-    }
-  </style>
 </head>
 
 <body>
+  <div id="content">
+    <h2>Verifying...</h2>
+  </div>
 
-<div class="card">
-  <h2>Verifying...</h2>
-  <div id="content"></div>
-</div>
+  <script>
+    const content = document.getElementById("content");
 
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get("t");
-
-  const content = document.getElementById("content");
-
-  if (!token) {
-    content.innerHTML = "<h3>No data found</h3>";
-  } else {
     try {
-      // 🔐 SAME KEY AS YOUR APP
-      const SECRET_KEY = "KMAGRO_AES_SECRET_32CHARSLONG_KEY";
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("t");
 
-      const bytes = CryptoJS.AES.decrypt(decodeURIComponent(token), SECRET_KEY);
-      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+      if (!token) {
+        content.innerHTML = "<h3>No data found</h3>";
+      } else {
+        const SECRET_KEY = "KMAGRO_AES_SECRET_32CHARSLONG_KEY";
 
-      const data = JSON.parse(decrypted);
-      console.log("DECODED DATA:", data);
+        const bytes = CryptoJS.AES.decrypt(decodeURIComponent(token), SECRET_KEY);
+        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
 
-    content.innerHTML = `
-  <h3 style="color: green;">✔ VERIFIED</h3>
-  <pre>${JSON.stringify(data, null, 2)}</pre>
-`;
-  <div><b>Serial:</b> ${data.s}</div>
-  <div><b>Vehicle:</b> ${data.v}</div>
-  <div><b>Gross:</b> ${data.g}</div>
-  <div><b>Tare:</b> ${data.t}</div>
-  <div><b>Net:</b> ${data.n}</div>
-  <div><b>Date:</b> ${data.ts}</div>
-`;
+        if (!decrypted) {
+          throw new Error("Decryption failed");
+        }
 
+        const data = JSON.parse(decrypted);
+
+        content.innerHTML = `
+          <div style="padding:20px; font-family:Arial;">
+            <h3 style="color:green;">✔ VERIFIED</h3>
+            <div><b>Serial:</b> ${data.s}</div>
+            <div><b>Vehicle:</b> ${data.v}</div>
+            <div><b>Gross:</b> ${data.g}</div>
+            <div><b>Tare:</b> ${data.t}</div>
+            <div><b>Net:</b> ${data.n}</div>
+            <div><b>Date:</b> ${data.ts}</div>
+          </div>
+        `;
+      }
     } catch (err) {
-      content.innerHTML = `
-        <h3 style="color:red;">❌ INVALID QR</h3>
-        <p>Unable to decode data</p>
-      `;
       console.error(err);
+      content.innerHTML = `
+        <div style="padding:20px; font-family:Arial;">
+          <h3 style="color:red;">❌ INVALID QR</h3>
+          <p>${err.message}</p>
+        </div>
+      `;
     }
-  }
-</script>
-
+  </script>
 </body>
 </html>
