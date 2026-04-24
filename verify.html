@@ -2,13 +2,15 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Verify Slip</title>
+  <title>KM Agro Verification</title>
+
+  <!-- CryptoJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #f5f5f5;
-      margin: 0;
       padding: 20px;
     }
 
@@ -21,20 +23,19 @@
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
 
-    .logo {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .logo img {
-      height: 50px;
-    }
-
     .verified {
       text-align: center;
       color: green;
-      font-size: 22px;
       font-weight: bold;
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    .invalid {
+      text-align: center;
+      color: red;
+      font-weight: bold;
+      font-size: 22px;
       margin-bottom: 15px;
     }
 
@@ -42,16 +43,6 @@
       display: flex;
       justify-content: space-between;
       margin: 6px 0;
-      font-size: 16px;
-    }
-
-    .label {
-      font-weight: bold;
-      color: #444;
-    }
-
-    .value {
-      color: #111;
     }
 
     hr {
@@ -62,49 +53,79 @@
 
 <body>
 
-  <div class="card">
+<div class="card" id="card">
+  <div id="status">Checking...</div>
+  <div id="data"></div>
+</div>
 
-    <div class="logo">
-      <!-- OPTIONAL: Replace with your logo -->
-      <img src="logo.png" alt="Logo">
-    </div>
+<script>
+const params = new URLSearchParams(window.location.search);
+const statusDiv = document.getElementById("status");
+const dataDiv = document.getElementById("data");
 
-    <div class="verified">✅ VERIFIED</div>
+function render(data, valid=true) {
 
-    <div class="row"><div class="label">Serial</div><div class="value" id="serial"></div></div>
-    <div class="row"><div class="label">Vehicle</div><div class="value" id="vehicle"></div></div>
-    <div class="row"><div class="label">Party</div><div class="value" id="party"></div></div>
-    <div class="row"><div class="label">Broker</div><div class="value" id="broker"></div></div>
-    <div class="row"><div class="label">Material</div><div class="value" id="material"></div></div>
+  statusDiv.className = valid ? "verified" : "invalid";
+  statusDiv.innerHTML = valid ? "✅ VERIFIED" : "❌ INVALID QR";
+
+  dataDiv.innerHTML = `
+    <div class="row"><b>Serial</b><span>${data.s || '-'}</span></div>
+    <div class="row"><b>Vehicle</b><span>${data.v || '-'}</span></div>
+    <div class="row"><b>Party</b><span>${data.p || '-'}</span></div>
+    <div class="row"><b>Broker</b><span>${data.b || '-'}</span></div>
+    <div class="row"><b>Material</b><span>${data.m || '-'}</span></div>
 
     <hr>
 
-    <div class="row"><div class="label">Gross</div><div class="value" id="gross"></div></div>
-    <div class="row"><div class="label">Tare</div><div class="value" id="tare"></div></div>
-    <div class="row"><div class="label">Net</div><div class="value" id="net"></div></div>
-    <div class="row"><div class="label">Date</div><div class="value" id="date"></div></div>
+    <div class="row"><b>Gross</b><span>${data.g || '-'}</span></div>
+    <div class="row"><b>Tare</b><span>${data.t || '-'}</span></div>
+    <div class="row"><b>Net</b><span>${data.n || '-'}</span></div>
+    <div class="row"><b>Date</b><span>${data.ts || '-'}</span></div>
+  `;
+}
 
-  </div>
+try {
+  const token = params.get("t");
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
+  // 🔐 CASE 1: ENCRYPTED QR
+  if (token) {
+    const SECRET_KEY = "KMAGRO_AES_SECRET_32CHARSLONG_KEY";
 
-    function set(id, key) {
-      const val = params.get(key);
-      document.getElementById(id).innerText =
-        val ? decodeURIComponent(val) : "-";
+    const bytes = CryptoJS.AES.decrypt(decodeURIComponent(token), SECRET_KEY);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+
+    if (!decrypted) throw new Error("Invalid token");
+
+    const data = JSON.parse(decrypted);
+    render(data, true);
+  }
+
+  // 📦 CASE 2: NORMAL URL PARAMS
+  else {
+    const data = {
+      s: params.get("serial"),
+      v: params.get("vehicle"),
+      p: params.get("party"),
+      b: params.get("broker"),
+      m: params.get("material"),
+      g: params.get("gross"),
+      t: params.get("tare"),
+      n: params.get("net"),
+      ts: params.get("date")
+    };
+
+    if (!data.s || !data.v) {
+      throw new Error("Missing data");
     }
 
-    set("serial", "serial");
-    set("vehicle", "vehicle");
-    set("party", "party");
-    set("broker", "broker");
-    set("material", "material");
-    set("gross", "gross");
-    set("tare", "tare");
-    set("net", "net");
-    set("date", "date");
-  </script>
+    render(data, true);
+  }
+
+} catch (err) {
+  console.error(err);
+  render({}, false);
+}
+</script>
 
 </body>
 </html>
