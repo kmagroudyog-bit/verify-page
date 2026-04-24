@@ -1,80 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KM Agro Verification</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verify Slip</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
 
-/* Card */
-.container {
-  max-width: 420px;
-  margin: 20px auto;
-  background: #fff;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-}
+    .container {
+      max-width: 420px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
 
-/* Logo */
-.logo {
-  text-align: center;
-  margin-bottom: 10px;
-}
-.logo img {
-  height: 40px;
-}
+    .logo {
+      text-align: center;
+      margin-bottom: 10px;
+    }
 
-/* Status */
-.status {
-  text-align: center;
-  font-weight: bold;
-  font-size: 20px;
-  margin-bottom: 15px;
-}
+    .logo img {
+      height: 50px;
+    }
 
-.verified {
-  color: green;
-}
+    .status {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: green;
+      margin-bottom: 20px;
+    }
 
-.invalid {
-  color: red;
-}
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      font-size: 15px;
+    }
 
-/* Rows */
-.row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-}
+    .label {
+      color: #777;
+    }
 
-.label {
-  color: #777;
-  font-size: 14px;
-}
+    .value {
+      font-weight: bold;
+      color: #111;
+    }
 
-.value {
-  font-weight: bold;
-  text-align: right;
-}
+    hr {
+      margin: 15px 0;
+      border: none;
+      border-top: 1px solid #ddd;
+    }
 
-/* Divider */
-.divider {
-  border-top: 1px solid #ddd;
-  margin: 12px 0;
-}
+    .weights {
+      margin-top: 10px;
+    }
 
-/* Weight highlight */
-.weight {
-  font-size: 16px;
-}
-</style>
+    .weights .row {
+      font-size: 16px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
 </head>
 
 <body>
@@ -83,22 +83,57 @@ body {
 
   <!-- LOGO -->
   <div class="logo">
-    <!-- Replace with your logo URL -->
-    <img src="https://via.placeholder.com/100x40?text=KM+AGRO" alt="Logo">
+    <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
   </div>
 
   <!-- STATUS -->
-  <div id="status" class="status verified">✅ VERIFIED</div>
+  <div class="status">✅ VERIFIED</div>
 
   <!-- DETAILS -->
-  <div class="row"><div class="label">Serial</div><div class="value" id="serial">-</div></div>
-  <div class="row"><div class="label">Vehicle</div><div class="value" id="vehicle">-</div></div>
-  <div class="row"><div class="label">Party</div><div class="value" id="party">-</div></div>
-  <div class="row"><div class="label">Broker</div><div class="value" id="broker">-</div></div>
-  <div class="row"><div class="label">Material</div><div class="value" id="material">-</div></div>
+  <div class="row"><span class="label">Serial</span><span class="value" id="serial">-</span></div>
+  <div class="row"><span class="label">Vehicle</span><span class="value" id="vehicle">-</span></div>
+  <div class="row"><span class="label">Party</span><span class="value" id="party">-</span></div>
+  <div class="row"><span class="label">Broker</span><span class="value" id="broker">-</span></div>
+  <div class="row"><span class="label">Material</span><span class="value" id="material">-</span></div>
 
-  <div class="divider"></div>
+  <hr/>
 
-  <!-- WEIGHT -->
-  <div class="row weight"><div class="label">Gross</div><div class="value" id="gross">-</div></div>
-  <div class="row weight"><div class="label">Tare</div><div
+  <!-- WEIGHTS -->
+  <div class="weights">
+    <div class="row"><span class="label">Gross</span><span class="value" id="gross">-</span></div>
+    <div class="row"><span class="label">Tare</span><span class="value" id="tare">-</span></div>
+    <div class="row"><span class="label">Net</span><span class="value" id="net">-</span></div>
+  </div>
+
+  <hr/>
+
+  <!-- DATE -->
+  <div class="row"><span class="label">Date</span><span class="value" id="date">-</span></div>
+
+  <div class="footer">
+    K.M Agro Udyog LLP
+  </div>
+
+</div>
+
+<!-- SCRIPT (VERY IMPORTANT) -->
+<script>
+const params = new URLSearchParams(window.location.search);
+
+function set(id, value) {
+  document.getElementById(id).innerText = value || "-";
+}
+
+set("serial", params.get("serial"));
+set("vehicle", params.get("vehicle"));
+set("party", params.get("party"));
+set("broker", params.get("broker"));
+set("material", params.get("material"));
+set("gross", params.get("gross"));
+set("tare", params.get("tare"));
+set("net", params.get("net"));
+set("date", params.get("date"));
+</script>
+
+</body>
+</html>
