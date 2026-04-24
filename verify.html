@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Verify Slip</title>
 
   <style>
     body {
+      font-family: Arial;
+      background: #f5f5f5;
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      padding: 20px;
     }
 
-    .container {
-      max-width: 420px;
-      margin: 30px auto;
-      background: #fff;
-      border-radius: 16px;
+    .card {
+      background: white;
+      border-radius: 20px;
       padding: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
 
     .logo {
@@ -30,110 +30,66 @@
       height: 50px;
     }
 
-    .status {
+    .verified {
       text-align: center;
+      color: green;
       font-size: 22px;
       font-weight: bold;
-      color: green;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .row {
       display: flex;
       justify-content: space-between;
-      margin: 8px 0;
-      font-size: 15px;
-    }
-
-    .label {
-      color: #777;
-    }
-
-    .value {
-      font-weight: bold;
-      color: #111;
+      margin: 6px 0;
+      font-size: 16px;
     }
 
     hr {
       margin: 15px 0;
-      border: none;
-      border-top: 1px solid #ddd;
-    }
-
-    .weights {
-      margin-top: 10px;
-    }
-
-    .weights .row {
-      font-size: 16px;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 12px;
-      color: #999;
     }
   </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="card">
 
-  <!-- LOGO -->
   <div class="logo">
-    <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+    <img src="logo.png" alt="Logo">
   </div>
 
-  <!-- STATUS -->
-  <div class="status">✅ VERIFIED</div>
+  <div class="verified">✅ VERIFIED</div>
 
-  <!-- DETAILS -->
-  <div class="row"><span class="label">Serial</span><span class="value" id="serial">-</span></div>
-  <div class="row"><span class="label">Vehicle</span><span class="value" id="vehicle">-</span></div>
-  <div class="row"><span class="label">Party</span><span class="value" id="party">-</span></div>
-  <div class="row"><span class="label">Broker</span><span class="value" id="broker">-</span></div>
-  <div class="row"><span class="label">Material</span><span class="value" id="material">-</span></div>
+  <div class="row"><b>Serial</b> <span id="serial"></span></div>
+  <div class="row"><b>Vehicle</b> <span id="vehicle"></span></div>
+  <div class="row"><b>Party</b> <span id="party"></span></div>
+  <div class="row"><b>Broker</b> <span id="broker"></span></div>
+  <div class="row"><b>Material</b> <span id="material"></span></div>
 
-  <hr/>
+  <hr>
 
-  <!-- WEIGHTS -->
-  <div class="weights">
-    <div class="row"><span class="label">Gross</span><span class="value" id="gross">-</span></div>
-    <div class="row"><span class="label">Tare</span><span class="value" id="tare">-</span></div>
-    <div class="row"><span class="label">Net</span><span class="value" id="net">-</span></div>
-  </div>
-
-  <hr/>
-
-  <!-- DATE -->
-  <div class="row"><span class="label">Date</span><span class="value" id="date">-</span></div>
-
-  <div class="footer">
-    K.M Agro Udyog LLP
-  </div>
+  <div class="row"><b>Gross</b> <span id="gross"></span></div>
+  <div class="row"><b>Tare</b> <span id="tare"></span></div>
+  <div class="row"><b>Net</b> <span id="net"></span></div>
+  <div class="row"><b>Date</b> <span id="date"></span></div>
 
 </div>
 
-<!-- SCRIPT (VERY IMPORTANT) -->
 <script>
-const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.search);
 
-function set(id, value) {
-  document.getElementById(id).innerText = value || "-";
-}
+  function set(id, key) {
+    const val = params.get(key);
+    document.getElementById(id).innerText = val ? decodeURIComponent(val) : "-";
+  }
 
-set("serial", params.get("serial"));
-set("vehicle", params.get("vehicle"));
-set("party", params.get("party"));
-set("broker", params.get("broker"));
-set("material", params.get("material"));
-set("gross", params.get("gross"));
-set("tare", params.get("tare"));
-set("net", params.get("net"));
-set("date", params.get("date"));
-</script>
-
-</body>
-</html>
+  set("serial", "serial");
+  set("vehicle", "vehicle");
+  set("party", "party");
+  set("broker", "broker");
+  set("material", "material");
+  set("gross", "gross");
+  set("tare", "tare");
+  set("net", "net");
+  set
