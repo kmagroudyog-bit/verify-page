@@ -6,7 +6,7 @@
 
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       background: #f5f5f5;
       margin: 0;
       padding: 20px;
@@ -16,7 +16,7 @@
       background: white;
       border-radius: 20px;
       padding: 20px;
-      max-width: 500px;
+      max-width: 420px;
       margin: auto;
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
@@ -45,6 +45,15 @@
       font-size: 16px;
     }
 
+    .label {
+      font-weight: bold;
+      color: #444;
+    }
+
+    .value {
+      color: #111;
+    }
+
     hr {
       margin: 15px 0;
     }
@@ -53,45 +62,49 @@
 
 <body>
 
-<div class="card">
+  <div class="card">
 
-  <div class="logo">
-    <img src="logo.png" alt="Logo">
+    <div class="logo">
+      <!-- OPTIONAL: Replace with your logo -->
+      <img src="logo.png" alt="Logo">
+    </div>
+
+    <div class="verified">✅ VERIFIED</div>
+
+    <div class="row"><div class="label">Serial</div><div class="value" id="serial"></div></div>
+    <div class="row"><div class="label">Vehicle</div><div class="value" id="vehicle"></div></div>
+    <div class="row"><div class="label">Party</div><div class="value" id="party"></div></div>
+    <div class="row"><div class="label">Broker</div><div class="value" id="broker"></div></div>
+    <div class="row"><div class="label">Material</div><div class="value" id="material"></div></div>
+
+    <hr>
+
+    <div class="row"><div class="label">Gross</div><div class="value" id="gross"></div></div>
+    <div class="row"><div class="label">Tare</div><div class="value" id="tare"></div></div>
+    <div class="row"><div class="label">Net</div><div class="value" id="net"></div></div>
+    <div class="row"><div class="label">Date</div><div class="value" id="date"></div></div>
+
   </div>
 
-  <div class="verified">✅ VERIFIED</div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
 
-  <div class="row"><b>Serial</b> <span id="serial"></span></div>
-  <div class="row"><b>Vehicle</b> <span id="vehicle"></span></div>
-  <div class="row"><b>Party</b> <span id="party"></span></div>
-  <div class="row"><b>Broker</b> <span id="broker"></span></div>
-  <div class="row"><b>Material</b> <span id="material"></span></div>
+    function set(id, key) {
+      const val = params.get(key);
+      document.getElementById(id).innerText =
+        val ? decodeURIComponent(val) : "-";
+    }
 
-  <hr>
+    set("serial", "serial");
+    set("vehicle", "vehicle");
+    set("party", "party");
+    set("broker", "broker");
+    set("material", "material");
+    set("gross", "gross");
+    set("tare", "tare");
+    set("net", "net");
+    set("date", "date");
+  </script>
 
-  <div class="row"><b>Gross</b> <span id="gross"></span></div>
-  <div class="row"><b>Tare</b> <span id="tare"></span></div>
-  <div class="row"><b>Net</b> <span id="net"></span></div>
-  <div class="row"><b>Date</b> <span id="date"></span></div>
-
-</div>
-
-<script>
-  const params = new URLSearchParams(window.location.search);
-
-  function set(id, key) {
-    const val = params.get(key);
-    document.getElementById(id).innerText =
-      val ? decodeURIComponent(val) : "-";
-  }
-
-  set("serial", "serial");
-  set("vehicle", "vehicle");
-  set("party", "party");
-  set("broker", "broker");
-  set("material", "material");
-  set("gross", "gross");
-  set("tare", "tare");
-  set("net", "net");
-  set("date", "date");
-</script>
+</body>
+</html>
