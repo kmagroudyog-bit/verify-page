@@ -1,68 +1,69 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>KM Agro Verification</title>
+<script>
+const content = document.getElementById("content");
 
-  <!-- CryptoJS REQUIRED -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-</head>
+function render(data) {
+  content.innerHTML = `
+    <div style="max-width:400px;margin:50px auto;padding:20px;
+    background:white;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);
+    font-family:Arial;">
 
-<body>
-  <div id="content">
-    <h2>Verifying...</h2>
-  </div>
+      <h3 style="color:green;text-align:center;">✔ VERIFIED</h3>
 
-  <script>
-    const content = document.getElementById("content");
+      <div><b>Serial:</b> ${data.s || '-'}</div>
+      <div><b>Vehicle:</b> ${data.v || '-'}</div>
 
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get("t");
+      <div><b>Party:</b> ${data.p || '-'}</div>
+      <div><b>Broker:</b> ${data.b || '-'}</div>
+      <div><b>Material:</b> ${data.m || '-'}</div>
 
-      if (!token) {
-        content.innerHTML = "<h3>No data found</h3>";
-      } else {
-        const SECRET_KEY = "KMAGRO_AES_SECRET_32CHARSLONG_KEY";
+      <hr>
 
-        // 🔥 IMPORTANT FIX (removed decodeURIComponent here)
-        const bytes = CryptoJS.AES.decrypt(token, SECRET_KEY);
-        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+      <div><b>Gross:</b> ${data.g || '-'}</div>
+      <div><b>Tare:</b> ${data.t || '-'}</div>
+      <div><b>Net:</b> ${data.n || '-'}</div>
+      <div><b>Date:</b> ${data.ts || '-'}</div>
+    </div>
+  `;
+}
 
-        if (!decrypted) {
-          throw new Error("Decryption failed");
-        }
+try {
+  const params = new URLSearchParams(window.location.search);
 
-        const data = JSON.parse(decrypted);
+  const token = params.get("t");
 
-        content.innerHTML = `
-          <div style="padding:20px; font-family:Arial;">
-            <h3 style="color:green;">✔ VERIFIED</h3>
+  if (token) {
+    // 🔒 TOKEN FLOW
+    const SECRET_KEY = "KMAGRO_AES_SECRET_32CHARSLONG_KEY";
+    const bytes = CryptoJS.AES.decrypt(token, SECRET_KEY);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
 
-            <div><b>Serial:</b> ${data.s}</div>
-            <div><b>Vehicle:</b> ${data.v}</div>
+    if (!decrypted) throw new Error("Invalid QR");
 
-            <div><b>Party:</b> ${data.p || '-'}</div>
-            <div><b>Broker:</b> ${data.b || '-'}</div>
-            <div><b>Material:</b> ${data.m || '-'}</div>
+    const data = JSON.parse(decrypted);
+    render(data);
 
-            <hr style="margin:10px 0;">
+  } else {
+    // 🟢 NORMAL PARAM FLOW (OLD QR)
+    const data = {
+      s: params.get("serial"),
+      v: params.get("vehicle"),
+      p: params.get("party"),
+      b: params.get("broker"),
+      m: params.get("material"),
+      g: params.get("gross"),
+      t: params.get("tare"),
+      n: params.get("net"),
+      ts: params.get("date")
+    };
 
-            <div><b>Gross:</b> ${data.g}</div>
-            <div><b>Tare:</b> ${data.t}</div>
-            <div><b>Net:</b> ${data.n}</div>
-            <div><b>Date:</b> ${data.ts}</div>
-          </div>
-        `;
-      }
-    } catch (err) {
-      console.error(err);
-      content.innerHTML = `
-        <div style="padding:20px; font-family:Arial;">
-          <h3 style="color:red;">❌ INVALID QR</h3>
-          <p>${err.message}</p>
-        </div>
-      `;
-    }
-  </script>
-</body>
-</html>
+    render(data);
+  }
+
+} catch (err) {
+  content.innerHTML = `
+    <div style="padding:20px;font-family:Arial;">
+      <h3 style="color:red;">❌ INVALID QR</h3>
+    </div>
+  `;
+}
+</script>
