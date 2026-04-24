@@ -1,131 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <title>KM Agro Verification</title>
 
-  <!-- CryptoJS -->
+  <!-- CryptoJS REQUIRED -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
-  <style>
-    body {
-      font-family: Arial;
-      background: #f5f5f5;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      max-width: 420px;
-      margin: auto;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-
-    .verified {
-      text-align: center;
-      color: green;
-      font-weight: bold;
-      font-size: 22px;
-      margin-bottom: 15px;
-    }
-
-    .invalid {
-      text-align: center;
-      color: red;
-      font-weight: bold;
-      font-size: 22px;
-      margin-bottom: 15px;
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      margin: 6px 0;
-    }
-
-    hr {
-      margin: 15px 0;
-    }
-  </style>
 </head>
 
 <body>
+  <div id="content">
+    <h2>Verifying...</h2>
+  </div>
 
-<div class="card" id="card">
-  <div id="status">Checking...</div>
-  <div id="data"></div>
-</div>
+  <script>
+    const content = document.getElementById("content");
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const statusDiv = document.getElementById("status");
-const dataDiv = document.getElementById("data");
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("t");
 
-function render(data, valid=true) {
+      if (!token) {
+        content.innerHTML = "<h3>No data found</h3>";
+      } else {
+        const SECRET_KEY = "KMAGRO_AES_SECRET_32CHARSLONG_KEY";
 
-  statusDiv.className = valid ? "verified" : "invalid";
-  statusDiv.innerHTML = valid ? "✅ VERIFIED" : "❌ INVALID QR";
+        // 🔥 IMPORTANT FIX (removed decodeURIComponent here)
+        const bytes = CryptoJS.AES.decrypt(token, SECRET_KEY);
+        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
 
-  dataDiv.innerHTML = `
-    <div class="row"><b>Serial</b><span>${data.s || '-'}</span></div>
-    <div class="row"><b>Vehicle</b><span>${data.v || '-'}</span></div>
-    <div class="row"><b>Party</b><span>${data.p || '-'}</span></div>
-    <div class="row"><b>Broker</b><span>${data.b || '-'}</span></div>
-    <div class="row"><b>Material</b><span>${data.m || '-'}</span></div>
+        if (!decrypted) {
+          throw new Error("Decryption failed");
+        }
 
-    <hr>
+        const data = JSON.parse(decrypted);
 
-    <div class="row"><b>Gross</b><span>${data.g || '-'}</span></div>
-    <div class="row"><b>Tare</b><span>${data.t || '-'}</span></div>
-    <div class="row"><b>Net</b><span>${data.n || '-'}</span></div>
-    <div class="row"><b>Date</b><span>${data.ts || '-'}</span></div>
-  `;
-}
+        content.innerHTML = `
+          <div style="padding:20px; font-family:Arial;">
+            <h3 style="color:green;">✔ VERIFIED</h3>
 
-try {
-  const token = params.get("t");
+            <div><b>Serial:</b> ${data.s}</div>
+            <div><b>Vehicle:</b> ${data.v}</div>
 
-  // 🔐 CASE 1: ENCRYPTED QR
-  if (token) {
-    const SECRET_KEY = "KMAGRO_AES_SECRET_32CHARSLONG_KEY";
+            <div><b>Party:</b> ${data.p || '-'}</div>
+            <div><b>Broker:</b> ${data.b || '-'}</div>
+            <div><b>Material:</b> ${data.m || '-'}</div>
 
-    const bytes = CryptoJS.AES.decrypt(decodeURIComponent(token), SECRET_KEY);
-    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+            <hr style="margin:10px 0;">
 
-    if (!decrypted) throw new Error("Invalid token");
-
-    const data = JSON.parse(decrypted);
-    render(data, true);
-  }
-
-  // 📦 CASE 2: NORMAL URL PARAMS
-  else {
-    const data = {
-      s: params.get("serial"),
-      v: params.get("vehicle"),
-      p: params.get("party"),
-      b: params.get("broker"),
-      m: params.get("material"),
-      g: params.get("gross"),
-      t: params.get("tare"),
-      n: params.get("net"),
-      ts: params.get("date")
-    };
-
-    if (!data.s || !data.v) {
-      throw new Error("Missing data");
+            <div><b>Gross:</b> ${data.g}</div>
+            <div><b>Tare:</b> ${data.t}</div>
+            <div><b>Net:</b> ${data.n}</div>
+            <div><b>Date:</b> ${data.ts}</div>
+          </div>
+        `;
+      }
+    } catch (err) {
+      console.error(err);
+      content.innerHTML = `
+        <div style="padding:20px; font-family:Arial;">
+          <h3 style="color:red;">❌ INVALID QR</h3>
+          <p>${err.message}</p>
+        </div>
+      `;
     }
-
-    render(data, true);
-  }
-
-} catch (err) {
-  console.error(err);
-  render({}, false);
-}
-</script>
-
+  </script>
 </body>
 </html>
