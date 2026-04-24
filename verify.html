@@ -81,7 +81,8 @@
 
   function set(id, key) {
     const val = params.get(key);
-    document.getElementById(id).innerText = val ? decodeURIComponent(val) : "-";
+    document.getElementById(id).innerText =
+      val ? decodeURIComponent(val) : "-";
   }
 
   set("serial", "serial");
@@ -92,4 +93,5 @@
   set("gross", "gross");
   set("tare", "tare");
   set("net", "net");
-  set
+  set("date", "date");
+</script>
